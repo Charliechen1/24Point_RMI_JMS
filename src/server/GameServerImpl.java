@@ -23,8 +23,12 @@ public class GameServerImpl extends UnicastRemoteObject
 	private ArrayList<Player> inGameUser;
 	private HashMap<String, Double> timeRec;
 	private HashMap<String, Object> resMap;
+<<<<<<< HEAD
 	private HashMap<String, String[]> queMap;
 	private String winAns;
+=======
+	private HashMap<String, Integer[]> queMap;
+>>>>>>> origin/master
 	
 	private JMSHelper jmsHelper;
 	private MessageConsumer queueReader;
@@ -36,7 +40,10 @@ public class GameServerImpl extends UnicastRemoteObject
 	private double waitPeriod;
 	private double gamePeriod;
 	
+<<<<<<< HEAD
 	QuestionBase qb;
+=======
+>>>>>>> origin/master
 	private String bestPlayer;
 	
 	/*
@@ -146,7 +153,10 @@ public class GameServerImpl extends UnicastRemoteObject
 
 		// TODO finish recording and comparing
 		if (validInfix(infix, name) && result == 24){
+<<<<<<< HEAD
 			winAns = infix;
+=======
+>>>>>>> origin/master
 			state = 3;
 			bestPlayer = name;
 		}
@@ -167,7 +177,10 @@ public class GameServerImpl extends UnicastRemoteObject
 	}
 	
 	public void start() throws JMSException{
+<<<<<<< HEAD
 		qb = new QuestionBase();
+=======
+>>>>>>> origin/master
 		queueReader = jmsHelper.createQueueReader();
 		topicSender = jmsHelper.createTopicSender();
 		System.out.println("[DEBUG] start function call");
@@ -252,9 +265,12 @@ public class GameServerImpl extends UnicastRemoteObject
 		respMap.put("opponents", inGameUser);
 		for(Player p : inGameUser){
 			try {
+<<<<<<< HEAD
 				String[] question = qb.get(p.hashCode());
 				queMap.put(p.getName(), question);
 				respMap.put("question", question);
+=======
+>>>>>>> origin/master
 				sendMessageTo(topicSender, respMap, p.getName());
 			} catch (JMSException e) {}
 		}
@@ -293,7 +309,11 @@ public class GameServerImpl extends UnicastRemoteObject
 			HashMap<String, Object> respMap = new HashMap<String, Object>();
 			respMap.put("response", "end");
 			respMap.put("winner", bestPlayer);
+<<<<<<< HEAD
 			respMap.put("winnerRes", winAns);
+=======
+			respMap.put("time", gamePeriod);
+>>>>>>> origin/master
 			for(Player p : inGameUser){
 				try {
 					sendMessageTo(topicSender, respMap, p.getName());

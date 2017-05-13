@@ -65,7 +65,11 @@ public class InfixParser {
             valStack.push(result);
         }
 		res = valStack.peek();
+<<<<<<< HEAD
         //System.out.println("result of the infex expression: " + res);
+=======
+        System.out.println("result of the infex expression: " + res);
+>>>>>>> origin/master
         return res;
 		} catch (Exception e){
 			return -99999;
