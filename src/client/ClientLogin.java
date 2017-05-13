@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 
+import javax.jms.JMSException;
+import javax.naming.NamingException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -82,7 +84,12 @@ public class ClientLogin implements Runnable{
     			// TODO Auto-generated method stub
         		username = userText.getText();
         		password = new String(passwordText.getPassword());
-        		loginService();
+        		try {
+					loginService();
+				} catch (NamingException | JMSException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
     		}
         });
         btnPanel.add(loginButton);
@@ -90,7 +97,8 @@ public class ClientLogin implements Runnable{
         JButton regButton = new JButton("register");
         regButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e) {
-        		new ClientReg(host).run();
+        		Thread t = new Thread(new ClientReg(host));
+				t.start();
         		login.setVisible(false);
     		}
         });
@@ -104,7 +112,7 @@ public class ClientLogin implements Runnable{
 		login.setVisible(true);
 	}
 	
-	public void loginService(){
+	public void loginService() throws NamingException, JMSException{
 		if (username.equals("")){
 			errorHandler("Login name should not be empty!", login);
 			return;
@@ -121,7 +129,7 @@ public class ClientLogin implements Runnable{
 				if (result.equals("success")){
 					myInfo = (Player)loginRes.get("userInfo");
 					login.setVisible(false);
-					new GameClient(host, myInfo).showMain();
+					new GameClient(host, myInfo, gameServer).run();
 					return;
 				}else{
 					errorHandler(result, login);
@@ -131,7 +139,7 @@ public class ClientLogin implements Runnable{
 	        }
     	}
 	}
-	
+	  
 	public void errorHandler(String error, JFrame frame){
 		JOptionPane.showMessageDialog(frame, error, "Error", 
 				JOptionPane.ERROR_MESSAGE);
