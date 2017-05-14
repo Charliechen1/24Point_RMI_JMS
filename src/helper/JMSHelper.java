@@ -1,4 +1,4 @@
-package helper;
+package client;
 import java.io.Serializable;
 
 import javax.jms.Connection;
@@ -19,9 +19,9 @@ public class JMSHelper {
 	private static final String DEFAULT_HOST = "localhost";
 	private static final int DEFAULT_PORT = 3700;
 	
-	private static final String JMS_CONNECTION_FACTORY = "jms/TestConnectionFactory";
-	private static final String JMS_QUEUE = "jms/TestQueue";
-	private static final String JMS_TOPIC = "jms/TestTopic";
+	private static final String JMS_CONNECTION_FACTORY = "jms/JPoker24GameConnectionFactory";
+	private static final String JMS_QUEUE = "jms/JPoker24GameQueue";
+	private static final String JMS_TOPIC = "jms/JPoker24GameTopic";
 	
 	private Context jndiContext;
 	private ConnectionFactory connectionFactory;

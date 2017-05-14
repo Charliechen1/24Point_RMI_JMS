@@ -1,3 +1,11 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package server;
 
 import java.util.*;
@@ -11,11 +19,11 @@ public class InfixParser {
 		valStack = new Stack<Double>();
 	}
 	
-	public static void main(String[] args){
-		InfixParser ip = new InfixParser();
-		ip.evaluate("Q + K - 1");
-	}
-	
+	/**
+	 * given a infix expression and evaluate it's value, return a very small value if encounter errors
+	 * @param input
+	 * @return
+	 */
 	protected double evaluate(String input){
 		try{
 		double res = -1;
@@ -23,7 +31,7 @@ public class InfixParser {
 			String s="";
 			char c=input.charAt(i);
 			switch(c){
-				case '1':
+				case '1': // for case '1', it must be case "10"
 					s += c;
 					if (i < input.length()-1 && input.charAt(i+1)=='0'){
 						s += input.charAt(i+1);
@@ -65,17 +73,18 @@ public class InfixParser {
             valStack.push(result);
         }
 		res = valStack.peek();
-<<<<<<< HEAD
         //System.out.println("result of the infex expression: " + res);
-=======
-        System.out.println("result of the infex expression: " + res);
->>>>>>> origin/master
         return res;
 		} catch (Exception e){
 			return -99999;
 		}
 	}
 	
+	/**
+	 * interpret the card type to double 
+	 * @param s
+	 * @return
+	 */
 	protected static double valueOf(String s){
 		switch (s){
 		case "A": return 1.0;
@@ -95,6 +104,11 @@ public class InfixParser {
 		return Double.POSITIVE_INFINITY;
 	}
 	
+	/**
+	 * precedence of different operators
+	 * @param op
+	 * @return
+	 */
 	private static int precedence(char op)
     {
         switch(op){
@@ -106,6 +120,13 @@ public class InfixParser {
         return -1;
     }
 	
+	/**
+	 * function to compute with two operand and one operator given
+	 * @param ope1
+	 * @param ope2
+	 * @param op
+	 * @return
+	 */
 	private static Double compute(Double ope1, Double ope2, char op)
     {
         if(op == '+'){

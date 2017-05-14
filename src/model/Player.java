@@ -1,4 +1,12 @@
-package model;
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
+package server;
 
 import java.io.Serializable;
 
@@ -9,6 +17,7 @@ public class Player implements Serializable, Comparable<Player>{
 	private int playedGames;
 	private double avgWinTime;
 	private int rank;
+	private boolean online = false;
 	
 	public Player(String n, String p){
 		name = n;
@@ -92,6 +101,10 @@ public class Player implements Serializable, Comparable<Player>{
 		this.rank = rank;
 	}
 
+	/* (non-Javadoc)
+	 * compare function for sorting and comparing issues
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(Player o) {
 		// TODO Auto-generated method stub

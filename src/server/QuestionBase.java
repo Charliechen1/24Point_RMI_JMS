@@ -1,20 +1,22 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package server;
 
 import java.util.*;
 
 public class QuestionBase {
-	ArrayList<String[]> questions;
-	ArrayList<String> possList;
-	String[] allPoint = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-	double error = 1E-6;
+	ArrayList<String[]> questions; // questions collection
+	ArrayList<String> possList; // all possibility for a permutation
+	final int COUN_LIMIT = 10000; // computation limit for JVM heap memory consideration
+	String[] allPoint = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}; 
+	double error = 1E-6; // permissed error
 	char[] ops = {'+', '-', '*', '/'};
-	
-	public static void main(String args[]){
-		QuestionBase qb = new QuestionBase();
-		for (int i=1; i<11; i++){
-			qb.get(i);
-		}
-	}
 	 
 	QuestionBase(){
 		questions = new ArrayList<String[]>();
@@ -39,7 +41,9 @@ public class QuestionBase {
 	 * generate the question base
 	 */
 	private void generateBase(){
+		int coun = 0; // give limit to the number of computation
 		InfixParser inp = new InfixParser();
+		// consider all possibilities, permutation
 		for (String s1 : allPoint)
 		for (String s2 : allPoint)
 		for (String s3 : allPoint)
@@ -48,6 +52,7 @@ public class QuestionBase {
 			for (char op1 : ops)
 			for (char op2 : ops)
 			for (char op3 : ops){
+				if (coun < COUN_LIMIT){
 				possList = new ArrayList<String>();
 				// no bracket
 				possList.add(s1 + op1 + s2 + op2 + s3 + op3 + s4);
@@ -60,7 +65,8 @@ public class QuestionBase {
 				// bracket for 3 numbers inside
 				possList.add('(' + s1 + op1 + s2 + op2 + s3 + ')' + op3 + s4);
 				possList.add(s1 + op1 + '(' + s2 + op2 + s3 + op3 + s4 + ')');
-	
+				
+				// bracket for both 3 numbers inside and 2 numbers inside
 				possList.add("((" + s1 + op1 + s2 + ')' + op2 + s3 + ')' + op3 + s4);
 				possList.add('(' + s1 + op1 + '(' + s2 + op2 + s3 + "))" + op3 + s4);
 				
@@ -69,14 +75,16 @@ public class QuestionBase {
 				
 				for (String poss : possList){
 					if (Math.abs(inp.evaluate(poss) - 24) < error){
-						//System.out.println("[DEBUG] " + poss);
+						coun++;
 						ansFlag = true;
 					}
 				}
+				}
 			}
-			if (ansFlag){
+		
+			if (ansFlag){ // it's a solvable case
+				coun++;
 				String[] thisQues = {s1, s2, s3, s4};
-				//System.out.println("[DEBUG] " + s1 + "\t" + s2 + "\t" + s3 + "\t" + s4);
 				questions.add(thisQues);
 			}
 		}

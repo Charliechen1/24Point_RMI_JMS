@@ -1,5 +1,12 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package server;
-import model.Player;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;

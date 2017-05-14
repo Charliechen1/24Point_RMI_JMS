@@ -1,19 +1,16 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package client;
 
 import java.awt.*;
-<<<<<<< HEAD
 import java.awt.event.*;
 import java.net.*;
-=======
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
->>>>>>> origin/master
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.*;
@@ -29,33 +26,28 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import model.Player;
 import server.GameServer;
-import helper.*;
+import server.Player;
 
 public class GameClient implements Runnable, MessageListener {
 	private String host;
 	private String winner = "no one";
 	private String winnerQue = "nothing";
 	private String currRes = "Not defined";
-<<<<<<< HEAD
 	
-	private long seed;
+	private long seed; // seed for generate randomness
 	
 	private String[] suits = {"spades", "hearts", "clubs", "diamonds"};
 	
 	private String[] question;
  	
-=======
-
->>>>>>> origin/master
 	private JTextField msgBox;
 	private GameServer gameServer;
 	JFrame mainFrame;
 	
 	private Player myInfo;
-	private ArrayList<Player> others;
-	private ArrayList<Player> oppos;
+	private ArrayList<Player> others; // all the other players
+	private ArrayList<Player> oppos; // all the opponents in the game
 	
 	private JMSHelper jmsHelper;
 	private MessageProducer queueSender;
@@ -63,7 +55,6 @@ public class GameClient implements Runnable, MessageListener {
 	
 	PlayGamePanel playGamePanel;
 	
-	private char[][] cards;
 	Vector<String> columnNames = new Vector<String>();
 	int coun = 0;
 
@@ -104,7 +95,6 @@ public class GameClient implements Runnable, MessageListener {
 	 */
 	public void init() throws JMSException{
 		oppos = new ArrayList<Player>();
-		cards = new char[4][2];
 		queueSender = jmsHelper.createQueueSender();
 		topicReceiver = jmsHelper.createTopicReader(myInfo.getName());
 		topicReceiver.setMessageListener(this);
@@ -147,6 +137,7 @@ public class GameClient implements Runnable, MessageListener {
 		usrProPanel.add(new Label("User Profile"));
 		
 		if (myInfo != null) {
+			usrProPanel.removeAll();
 			usrProPanel.add(new JLabel(myInfo.getName()));
 			usrProPanel.add(new JLabel("Number of wins: " + myInfo.getWonGames()));
 			usrProPanel.add(new JLabel("Number of games: " + myInfo.getPlayedGames()));
@@ -179,6 +170,21 @@ public class GameClient implements Runnable, MessageListener {
 	    		}
 			});
 		}
+		
+		btnArr[0].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {	
+				System.out.println("[DEBUG] user profile panel clicked");
+				if (myInfo != null) {
+					usrProPanel.removeAll();
+					usrProPanel.add(new JLabel(myInfo.getName()));
+					usrProPanel.add(new JLabel("Number of wins: " + myInfo.getWonGames()));
+					usrProPanel.add(new JLabel("Number of games: " + myInfo.getPlayedGames()));
+					usrProPanel.add(new JLabel("Average time to win: " + myInfo.getAvgWinTime() + "s"));
+					usrProPanel.add(new JLabel("Rank: #" + myInfo.getRank()));
+				}
+				new Thread(new panelPrintWorker(usrProPanel)).start();
+			}
+		});
 		
 		btnArr[1].addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {	
@@ -263,23 +269,6 @@ public class GameClient implements Runnable, MessageListener {
 		System.out.println("[DEBUG] leader board refreshed.");
 	}
 	
-//	private class LeaderBoardPanel extends JPanel implements MouseListener {
-//		private GameServer gameServer;
-//		public LeaderBoardPanel(GameServer gs){
-//			//addMouseListener(this);
-//			gameServer = gs;
-//			refresh(this);
-//		}
-//		
-//		public void mouseClicked(MouseEvent e) {
-//			new Thread(new panelPrintWorker(this)).start();
-//		}
-//		public void mouseEntered(MouseEvent e) {}
-//		public void mouseExited(MouseEvent e) {}
-//		public void mousePressed(MouseEvent e) {}
-//		public void mouseReleased(MouseEvent e) {}	
-//	}
-	
 	/**
 	 * @author Charliechen
 	 * a worker for painting thread
@@ -297,6 +286,10 @@ public class GameClient implements Runnable, MessageListener {
 		}
 	}	
 	
+	/**
+	 * @author jchen
+	 * major panel for dealing with game display for different stage
+	 */
 	private class PlayGamePanel extends JPanel implements MouseListener{
 		GameServer gs;
 		private PlayGamePanel(GameServer g){
@@ -346,10 +339,7 @@ public class GameClient implements Runnable, MessageListener {
 				this.add(newGameBtn, BorderLayout.CENTER);
 				break;
 			case 1: // game joining state
-<<<<<<< HEAD
 				seed = System.currentTimeMillis() + myInfo.hashCode();
-=======
->>>>>>> origin/master
 				System.out.println("[DEBUG] Now game joining state.");
 				this.removeAll();
 				label = new JLabel("Waiting for players...");
@@ -362,8 +352,8 @@ public class GameClient implements Runnable, MessageListener {
 				
 				JPanel oppo = new JPanel(); // panel to put name and record for all the player in room
 				oppo.setLayout(new GridLayout(4, 1));
-				// need further work, place to put information of the players in room
-<<<<<<< HEAD
+				
+				// illustrate information for the players in room, both this player and the opponents
 				JLabel youla = new JLabel("<html>"+myInfo.getName()+
 						"<br>Win: "+myInfo.getWonGames()+"/"+myInfo.getPlayedGames()+
 						" Avg: "+myInfo.getAvgWinTime()+"s</html>");
@@ -382,17 +372,6 @@ public class GameClient implements Runnable, MessageListener {
 								"opponent", TitledBorder.LEFT, TitledBorder.TOP));
 						oppo.add(oppola);
 					}
-=======
-				oppo.add(new JLabel("<html>"+myInfo.getName()+
-						"<br>Win: "+myInfo.getWonGames()+"/"+myInfo.getPlayedGames()+
-						" Avg: "+myInfo.getAvgWinTime()+"s</html>"));
-				
-				for (int i=0; i<oppos.size(); i++){
-					if (!oppos.get(i).getName().equals(myInfo.getName()))
-						oppo.add(new JLabel("<html>"+oppos.get(i).getName()+
-							"<br>Win: "+oppos.get(i).getWonGames()+"/"+oppos.get(i).getPlayedGames()+
-							" Avg: "+oppos.get(i).getAvgWinTime()+"s</html>"));
->>>>>>> origin/master
 				}
 				this.add(oppo, BorderLayout.EAST);
 				
@@ -401,24 +380,15 @@ public class GameClient implements Runnable, MessageListener {
 				
 				JPanel cardPane = new JPanel();
 				cardPane.setLayout(new GridLayout(1, 4));
-<<<<<<< HEAD
 				Random rand = new Random(seed);
-				int suitpicker = rand.nextInt();
-				// wait for further modification
+				int suitpicker = rand.nextInt(); // random for suits
+				// illustrate the question
 				if (question != null){
 					for (int i = 0; i < question.length; i++){
 						int idx = Math.floorMod(suitpicker + i, 4);
 						cardPane.add(getLogo(question[i], suits[idx]));
 					}
 				}
-=======
-				
-				// wait for further modification
-				cardPane.add(new Label("Card1"));
-				cardPane.add(new Label("Card2"));
-				cardPane.add(new Label("Card3"));
-				cardPane.add(new Label("Card4"));
->>>>>>> origin/master
 				mainBoard.add(cardPane, BorderLayout.CENTER);
 				
 				JPanel comPane = new JPanel();
@@ -469,13 +439,17 @@ public class GameClient implements Runnable, MessageListener {
 			new Thread(new panelPrintWorker(this)).start();
 		}
 		
+		/**
+		 * when enter is pressed, the infix expression will be calculated
+		 * @throws RemoteException
+		 */
 		protected void sendComp() throws RemoteException{
 			String infix = msgBox.getText().trim();
 			System.out.println("[DEBUG] infix: " + infix);
 			HashMap<String, Object> resMap = this.gs.compInfix(infix, myInfo.getName());
 			double result = (double)resMap.get("result");
 			System.out.println("[DEBUG] result: " + result);
-			if (result == -99999){
+			if (result < -10000){ // error cases
 				currRes = "Error";
 			} else {
 				currRes = (int)result + "";
@@ -485,9 +459,15 @@ public class GameClient implements Runnable, MessageListener {
 		}
 	}
 	
-<<<<<<< HEAD
+	/**
+	 * function when given a card and suit, return the path of it's png file
+	 * @param card
+	 * @param suit
+	 * @return
+	 */
 	public String filename(String card, String suit){
 		String res = "cards/";
+//		String res = "";
 		if (card.equals("A"))
 			res += "ace";
 		else if(card.equals("J"))
@@ -499,24 +479,32 @@ public class GameClient implements Runnable, MessageListener {
 		else
 			res += card;
 		res += "_of_"+suit+".png";
+		System.out.println("[DEBUG] path of card image: " + res);
 		return res;
 	}
 	
+	/**
+	 * given card and suit, return a JLabel containing the corresponding image icon
+	 * @param card
+	 * @param suit
+	 * @return
+	 */
 	private Component getLogo(String card, String suit) {
 		String filename = filename(card, suit);
-		System.out.println("[DEBUG] png of card path: " + filename);
-		ImageIcon imageIcon = new ImageIcon(filename); 
-		Image image = imageIcon.getImage(); 
-		Image newimg = image.getScaledInstance(138, 200,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
-		imageIcon = new ImageIcon(newimg); 
-		JLabel label = new JLabel(imageIcon);
-		return label;
-//		try {
-//			URL url = getClass().getResource(filename).toURI().toURL();
-//			return new JLabel(new ImageIcon(url));
-//		} catch (MalformedURLException | URISyntaxException e) {
-//		}
-//		return new JLabel();
+		//String absPath = "C:\\common_profile\\eclipse_default_workspace\\neon_default_workspace\\Assignment3\\";
+		try {
+			URL url = getClass().getResource("/"+filename).toURI().toURL();
+			ImageIcon imageIcon = new ImageIcon(url); 
+//			ImageIcon imageIcon = new ImageIcon(filename); 
+			Image image = imageIcon.getImage(); 
+			Image newimg = image.getScaledInstance(138, 200,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+			imageIcon = new ImageIcon(newimg); 
+			JLabel label = new JLabel(imageIcon);
+			return label;
+		} catch (MalformedURLException | URISyntaxException e) {
+			e.printStackTrace();
+			return new JLabel();
+		}
 	}
 
 	
@@ -541,14 +529,23 @@ public class GameClient implements Runnable, MessageListener {
 		}
 	}
 	
+	/**
+	 * handler for when receives a message from the server reject for joining
+	 * @param respMap
+	 */
 	protected void rejectHandler(HashMap<String, Object> respMap){
 		System.out.println("[DEBUG] rejected");
 		state = 0;
 		playGamePanel.refresh();
 	}
 	
+	/**
+	 * handler for when receives a message from the server notice the start of the game
+	 * @param respMap
+	 */
 	protected void startHandler(HashMap<String, Object> respMap){
 		if (respMap != null){
+			myInfo.setPlayedGames(myInfo.getPlayedGames()+1);
 			oppos = (ArrayList<Player>) respMap.get("opponents");
 			question = (String[]) respMap.get("question");
 			state = 2;
@@ -556,73 +553,37 @@ public class GameClient implements Runnable, MessageListener {
 		}
 	}
 	
+	/**
+	 *  handler for when receives a message from the server notice the end of the game
+	 * @param respMap
+	 */
 	protected void endHandler(HashMap<String, Object> respMap){
 		if (respMap != null){
 			state = 3;
 			winner = (String)respMap.get("winner");
+			if (winner.equals(myInfo.getName())){ // this player is winner
+				double winTime = (Double)respMap.get("winTime");
+				double newTime = (myInfo.getAvgWinTime() * myInfo.getWonGames() + winTime)/(myInfo.getWonGames()+1);
+				myInfo.setAvgWinTime(newTime);
+				myInfo.setWonGames(myInfo.getWonGames()+1);
+			}
 			winnerQue = (String)respMap.get("winnerRes");
 			playGamePanel.refresh();
 		}
 	}
 	
-	protected void exitProcedure(String name, JFrame frame) throws RemoteException{
-		gameServer.userLogout(name);
-		frame.dispose();
-	    System.exit(0);
-	}
-	
-=======
 	/**
-	 * function to send message for join a game
+	 * function called when the frame close is clicked
+	 * @param name
+	 * @param frame
+	 * @throws RemoteException
 	 */
-	protected void sendJoinReq(){
-		System.out.println("[DEBUG] request for join a game");
-		HashMap reqMap = new HashMap<String, Object>();
-		reqMap.put("request", "join");
-		reqMap.put("from", myInfo.getName());
-		Message message = null;
-		try {
-			message = jmsHelper.createMessage(reqMap);
-		} catch (JMSException e) {}
-		if(message != null) {
-			try {
-				queueSender.send(message);
-			} catch (JMSException e) {
-				System.err.println("Failed to send message");
-			}
-		}
-	}
-	
-	protected void rejectHandler(HashMap<String, Object> respMap){
-		System.out.println("[DEBUG] rejected");
-		state = 0;
-		playGamePanel.refresh();
-	}
-	
-	protected void startHandler(HashMap<String, Object> respMap){
-		if (respMap != null){
-			oppos = (ArrayList<Player>) respMap.get("opponents");
-			state = 2;
-			playGamePanel.refresh();
-		}
-	}
-	
-	protected void endHandler(HashMap<String, Object> respMap){
-		if (respMap != null){
-			state = 3;
-			winner = (String)respMap.get("winner");
-			winnerQue = (double)respMap.get("time")+"s";
-			playGamePanel.refresh();
-		}
-	}
-	
 	protected void exitProcedure(String name, JFrame frame) throws RemoteException{
 		gameServer.userLogout(name);
 		frame.dispose();
 	    System.exit(0);
 	}
 	
->>>>>>> origin/master
 	/* (non-Javadoc)
 	 * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
 	 */

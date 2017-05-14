@@ -1,3 +1,11 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package client;
 
 import java.awt.Color;
@@ -23,8 +31,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import model.Player;
 import server.GameServer;
+import server.Player;
 
 public class ClientReg implements Runnable{
 	GameServer gameServer;
@@ -47,6 +55,9 @@ public class ClientReg implements Runnable{
 		showRegistry();
 	}
 	
+	/**
+	 * function to show the swing of the registry window
+	 */
 	public void showRegistry(){
 		registry = new JFrame("Login");
 		JPanel panel = new JPanel();
@@ -118,7 +129,13 @@ public class ClientReg implements Runnable{
 	}
 
 	
+	/**
+	 * request for registry to the server
+	 * @throws NamingException
+	 * @throws JMSException
+	 */
 	public void registerService() throws NamingException, JMSException{
+		// only when username is not empty and password == compassword will the request be sent
 		if (username.equals("")){
 			errorHandler("Login name should not be empty!", registry);
 			return;
@@ -138,12 +155,15 @@ public class ClientReg implements Runnable{
 				HashMap<String, Object>regRes = gameServer.userRegister(username, password);
 				String result = (String)regRes.get("result");
 				System.out.println("[Login Result: " + result + "]");
+				// response will be a hashmap
 				if (result.equals("success")){
+					// register succeed, will directly login
 					myInfo = (Player)regRes.get("userInfo");
 					registry.setVisible(false);
 					new GameClient(host, myInfo, gameServer).run();
 					return;
 				}else{
+					// failed for some reason
 					errorHandler(result, registry);
 				}
 			} catch (RemoteException ex) {
@@ -153,6 +173,11 @@ public class ClientReg implements Runnable{
 		
 	}
 	
+	/**
+	 * directly pop out the error message
+	 * @param error
+	 * @param frame
+	 */
 	public void errorHandler(String error, JFrame frame){
 		JOptionPane.showMessageDialog(frame, error, "Error", 
 				JOptionPane.ERROR_MESSAGE);

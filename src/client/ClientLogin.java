@@ -1,3 +1,11 @@
+/**********************************************************************
+
+
+												Author: Chen Jiali 
+												UID: 3035085695
+
+
+***********************************************************************/
 package client;
 
 import java.awt.Color;
@@ -23,8 +31,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import model.Player;
 import server.GameServer;
+import server.Player;
 
 public class ClientLogin implements Runnable{
 	GameServer gameServer;
@@ -51,6 +59,9 @@ public class ClientLogin implements Runnable{
 		showLogin();
 	}
 	
+	/**
+	 * function to control the swing of the login window
+	 */
 	public void showLogin(){
 		login = new JFrame("Login");
 		JPanel panel = new JPanel();
@@ -81,13 +92,11 @@ public class ClientLogin implements Runnable{
         JButton loginButton = new JButton("login");
         loginButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e) {
-    			// TODO Auto-generated method stub
         		username = userText.getText();
         		password = new String(passwordText.getPassword());
         		try {
 					loginService();
 				} catch (NamingException | JMSException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
     		}
@@ -125,13 +134,16 @@ public class ClientLogin implements Runnable{
 			try{
 				HashMap<String, Object> loginRes = gameServer.userLogin(username, password);
 				String result = (String)loginRes.get("result");
+				// response of the login request will come as a hashmap 
 				System.out.println("[Register Result: " + result + "]");
 				if (result.equals("success")){
+					// if the login succeed
 					myInfo = (Player)loginRes.get("userInfo");
 					login.setVisible(false);
 					new GameClient(host, myInfo, gameServer).run();
 					return;
 				}else{
+					//login failed because the account has already been online
 					errorHandler(result, login);
 				}
 			} catch (RemoteException ex) {
@@ -140,6 +152,11 @@ public class ClientLogin implements Runnable{
     	}
 	}
 	  
+	/**
+	 * directly print the error message
+	 * @param error
+	 * @param frame
+	 */
 	public void errorHandler(String error, JFrame frame){
 		JOptionPane.showMessageDialog(frame, error, "Error", 
 				JOptionPane.ERROR_MESSAGE);
