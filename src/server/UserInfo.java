@@ -24,9 +24,9 @@ import java.util.Scanner;
 public class UserInfo {
 	// DB connection information
 	private static final String DB_HOST = "sophia";
-	private static final String DB_USER = "jchen";
-	private static final String DB_PASS = "PNeufFgv";
-	private static final String DB_NAME = "jchen";
+	private static final String DB_USER = "";
+	private static final String DB_PASS = "";
+	private static final String DB_NAME = "";
 	private Connection conn;
 	
 	private HashMap<String, Player> allCurrPlayer;
